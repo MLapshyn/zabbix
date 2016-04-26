@@ -1,0 +1,7 @@
+ip=$(ifconfig eth1 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+
+usr_login=$(curl -i -X POST -H 'Content-Type: application/json-rpc' -d '{"jsonrpc": "2.0", "method": "user.login", "params": { "user": "Admin", "password": "zabbix"}, "id": 1}' http://192.168.56.23/zabbix/api_jsonrpc.php | sed -n 's/.*result":"\(.*\)",.*/\1/p')
+
+curl -i -X POST -H 'Content-Type: application/json-rpc' -d '{"jsonrpc": "2.0","method": "host.create","params": {"host": "zabbix-test-agent","interfaces": [{"type": 1,"main": 1,"useip": 1,"ip": "$ip","port": "10050"}],"groups": [{"groupid": "5"}],"templates": [{"templateid": "10108"}],"auth": "$usr_login","id": 1}' http://192.168.56.23/zabbix/api_jsonrpc.php
+
+
